@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, current_user
 #from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm
-from app import mongo, login
+from app import mongo
 #from app.models import User
 #from app.auth.email import send_password_reset_email
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -48,7 +48,3 @@ def register():
     return render_template('auth/register.html', title='Register',
                            form=form)
 
-
-@login.user_loader
-def load_user(id):
-    return mongo.db.users.find_one({_id: id})                          
