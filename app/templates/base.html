@@ -1,0 +1,14 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - Nohara</title>
+        {% else %}
+        <title>Welcome to Nohara</title>
+        {% endif %}
+    </head>
+    <body>
+        <div>Nohara</div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>
