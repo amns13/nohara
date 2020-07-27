@@ -39,4 +39,21 @@ def register():
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    pass
+    if request.method =='POST':
+        username = request.form['username']
+        password = request.form['password']
+        error = None
+
+        if not username or not password:
+            error = "Please enter Username and Password."
+        else:
+            usr = User.query.filter_by(username=username).first()
+            if usr is None or not usr.check_password(password):
+                error = "Incorrect Username or password."
+
+        if error is None:
+            return redirect(url_for('main.index'))
+
+        flash(error)
+    
+    return render_template('auth/login.html', title='Sign In')
