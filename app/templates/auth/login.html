@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block app_content %}
@@ -8,10 +7,19 @@
             <form method="post">
                 <label for="username">Username</label><br>
                 <input name="username" id="username" required><br>
+                <br>
                 <label for="password">Password</label><br>
                 <input type="password" name="password" id="password" required><br>
+                <br>
                 <input type="submit" value="Sign In.">
+                <br>
             </form>
         </div>
     </div>
+
+    <p>New User? <a href="{{ url_for('auth.register') }}">Click to Register!</a></p>
+    <p>
+        Forgot Your Password?
+        <a href="#">Click to Reset It</a>
+    </p>
 {% endblock %}

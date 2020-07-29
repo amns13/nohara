@@ -1,1 +1,7 @@
-<!-- TO-DO: ADD INDEX HTML -->
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% for post in posts %}
+        {% include '_post.html' %}
+    {% endfor %}
+{% endblock %}

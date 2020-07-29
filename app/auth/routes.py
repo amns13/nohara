@@ -3,7 +3,6 @@ from app.auth import bp
 from app import db
 from app.models import User
 from flask import redirect, render_template, url_for, request, flash, session, g
-
 from sqlalchemy import or_
 
 
