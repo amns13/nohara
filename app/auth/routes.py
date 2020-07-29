@@ -58,7 +58,7 @@ def login():
             # the user’s id is stored in a new session. The data is stored in a cookie that 
             # is sent to the browser, and the browser then sends it back with subsequent requests.
             session.clear()
-            session['user_id'] = user['id']
+            session['user_id'] = user.id
 
             return redirect(url_for('main.index'))
 

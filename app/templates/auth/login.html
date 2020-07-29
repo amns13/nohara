@@ -1,15 +1,17 @@
 
 {% extends "base.html" %}
 
-{% block content %}
-    {% for message in get_flashed_messages() %}
-        <div class="flash" style="color: red;">{{ message }}</div>
-    {% endfor %}
-    <form method="post">
-        <label for="username">Username</label><br>
-        <input name="username" id="username" required><br>
-        <label for="password">Password</label><br>
-        <input type="password" name="password" id="password" required><br>
-        <input type="submit" value="Sign In.">
-    </form>
+{% block app_content %}
+    <h1>Sign In</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post">
+                <label for="username">Username</label><br>
+                <input name="username" id="username" required><br>
+                <label for="password">Password</label><br>
+                <input type="password" name="password" id="password" required><br>
+                <input type="submit" value="Sign In.">
+            </form>
+        </div>
+    </div>
 {% endblock %}
