@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>New Post</h1>
+    <h1>Create a new blog post.</h1>
     <div class="row">
         <div class="col-md-4">
             <form method="POST">
-                <label for="title">Title</label>
-                <input name="title" id="title" value="{{ request.form['title'] }}" required>
-                <label for="body">Body</label>
-                <textarea name="body" id="body" required>{{ request.form['body'] }}</textarea>
+                <label for="title">Title</label><br>
+                <input name="title" id="title" value="{{ request.form['title'] }}" required><br>
+                <br>
+                <label for="body">Body</label><br>
+                <textarea name="body" id="body" rows="8" cols="50" required>{{ request.form['body'] }}</textarea><br>
+                <br>
                 <input type="submit" value="Save">
             </form>
         </div>
