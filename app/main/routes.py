@@ -32,3 +32,17 @@ def create():
             return redirect(url_for('main.index'))
 
     return render_template('create.html', title="New Post.")
+
+
+@bp.route('/post/<int:id>')
+def post(id):
+    post = Post.query.filter_by(id=id).first_or_404()
+    return render_template('blog_post.html', post=post, title=post.title)
+
+
+@bp.route('/user/<int:id>')
+@login_required
+def user(id):
+    user = User.query.filter_by(id=id).first_or_404()
+    posts = Post.query.filter_by(author_id=id)
+    return render_template('user.html', user=user, title=user.username, posts=posts)

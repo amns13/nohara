@@ -1,12 +1,12 @@
     <table class="table table-hover">
         <tr>
             <td>
-                <a href="#">
+                <a href="{{ url_for('main.post', id=post.id) }}">
                     {{ post.title }}
                 </a>
                 <br>
                 by
-                <a href="#">
+                <a href="{{ url_for('main.user', id=post.author.id) }}">
                     {{ post.author.username }}
                 </a>
                 <br>
