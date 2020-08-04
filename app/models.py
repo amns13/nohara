@@ -1,6 +1,9 @@
 from app import db
+import jwt
+from time import time
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask import current_app
 
 
 class User(db.Model):
@@ -18,6 +21,20 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
 
 
 class Post(db.Model):

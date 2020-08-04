@@ -91,3 +91,27 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+
+@bp.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if request.method == 'POST':
+        email = request.form['email']
+        error = None
+
+        if not email:
+            error = 'Email is required.'
+        else:
+            user = User.query.filter_by(email=email).first()
+            if user is None:
+                error = "Email not found."
+
+        if error is None:
+            # TO-DO: add logic for password reset mail
+            send_password_reset_email(user)
+            flash('Check your email for the instructions to reset your password')
+            return redirect(url_for('auth.login'))
+
+        flash(error)
+
+    render_template('auth/reset_pasword_request.html', title='Reset Password.')
