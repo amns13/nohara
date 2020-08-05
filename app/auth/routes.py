@@ -4,7 +4,7 @@ from app import db
 from app.models import User
 from flask import redirect, render_template, url_for, request, flash, session, g
 from sqlalchemy import or_
-
+from app.auth.email import send_password_reset_email
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -114,4 +114,23 @@ def reset_password_request():
 
         flash(error)
 
-    render_template('auth/reset_pasword_request.html', title='Reset Password.')
+    return render_template('auth/reset_password_request.html', title='Reset Password.')
+
+
+@bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = User.verify_reset_password_token(token)
+
+    if not user:
+        return redirect(url_for('main.index'))
+
+    if request.method == 'POST':
+        password = request.form['password']
+        user.set_password(password)
+
+        db.session.commit()
+        flash('Your password has been reset')
+
+        return redirect(url_for('auth.login'))
+
+    return render_template('auth/reset_password.html', title="Reset Password")
