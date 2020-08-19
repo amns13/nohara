@@ -10,7 +10,7 @@
                     {{ post.author.username }}
                 </a>
                 <br>
-                Posted at : {{ post.timestamp }}
+                Posted at : {{ moment(post.timestamp).format('LLL') }}
             </td>
         </tr>
     </table>
