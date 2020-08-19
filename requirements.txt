@@ -5,8 +5,10 @@ click==7.1.2
 dominate==2.5.1
 Flask==1.1.2
 Flask-Bootstrap==3.3.7.1
+Flask-CKEditor==0.4.4.1
 Flask-Mail==0.9.1
 Flask-Migrate==2.5.3
+Flask-Moment==0.10.0
 Flask-SQLAlchemy==2.4.4
 isort==4.3.21
 itsdangerous==1.1.0
