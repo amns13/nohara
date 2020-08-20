@@ -9,10 +9,12 @@
                 <input name="title" id="title" value="{{ request.form['title'] }}" required><br>
                 <br>
                 <label for="body">Body</label><br>
-                <textarea name="body" id="body" rows="8" cols="50" required>{{ request.form['body'] }}</textarea><br>
+                <!--textarea name="body" id="body" rows="8" cols="50" required>{{ request.form['body'] }}</textarea><br-->
+                {{ ckeditor.create(value="{{ request.form['body'] }}") }}
                 <br>
                 <input type="submit" value="Save">
             </form>
         </div>
     </div>
+    {{ ckeditor.load() }}
 {% endblock %}
