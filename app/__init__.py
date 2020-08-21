@@ -6,12 +6,16 @@ from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_ckeditor import CKEditor
+from flask_login import LoginManager
 
 db = SQLAlchemy()
 migrate = Migrate()
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
+login = LoginManager()
+login.login_view = 'auth.login'
+login.login_message = 'Please log in to access this page.'
 ckeditor = CKEditor()
 
 def create_app(config_class=Config):
@@ -23,6 +27,7 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
+    login.init_app(app)
     ckeditor.init_app(app)
 
     from app.auth import bp as auth_bp
