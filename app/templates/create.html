@@ -1,19 +1,11 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
     <h1>Create a new blog post.</h1>
     <div class="row">
         <div class="col-md-4">
-            <form method="POST">
-                <label for="title">Title</label><br>
-                <input name="title" id="title" value="{{ request.form['title'] }}" required><br>
-                <br>
-                <label for="body">Body</label><br>
-                <!--textarea name="body" id="body" rows="8" cols="50" required>{{ request.form['body'] }}</textarea><br-->
-                {{ ckeditor.create(value="{{ request.form['body'] }}") }}
-                <br>
-                <input type="submit" value="Save">
-            </form>
+            {{ wtf.quick_form(form) }}
         </div>
     </div>
     {{ ckeditor.load() }}
