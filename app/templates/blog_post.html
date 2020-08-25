@@ -4,5 +4,5 @@
     <h1>{{ post.title }}</h1><br>
     - By <em>{{ post.author.username }}</em>
     <hr>
-    {{ post.body }}
+    {% include temp_id %}
 {% endblock %}
