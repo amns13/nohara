@@ -5,8 +5,6 @@ from flask_login import login_required, current_user
 from flask import redirect, render_template, url_for, request, flash, session, g
 from app.main.forms import CreateForm
 
-import os
-
 @bp.route('/')
 @bp.route('/index')
 def index():
@@ -49,18 +47,7 @@ def create():
 @bp.route('/post/<int:id>')
 def post(id):
     post = Post.query.filter_by(id=id).first_or_404()
-    template_id = post.template_id
-    if post.template_id is None:
-        pardir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-        basedir = os.path.join(pardir, 'templates/posts')
-        template_id = str(id)+'.html'
-        template_name = os.path.join(basedir, template_id)
-        with open(template_name, 'w') as temp:
-            temp.write(post.body)
-        post.template_id = template_id
-        db.session.commit()
-
-    return render_template('blog_post.html', post=post, title=post.title, temp_id = 'posts/'+template_id)
+    return render_template('blog_post.html', post=post, title=post.title)
 
 
 @bp.route('/user/<int:id>')
