@@ -2,8 +2,11 @@ from app.main import bp
 from app import db
 from app.models import User, Post
 from flask_login import login_required, current_user
-from flask import redirect, render_template, url_for, request, flash, session, g
+from flask import redirect, render_template, url_for, request, flash, session, g, current_app, send_from_directory
 from app.main.forms import CreateForm
+from flask_ckeditor import upload_fail, upload_success
+
+import os
 
 @bp.route('/')
 @bp.route('/index')
@@ -56,3 +59,21 @@ def user(id):
     user = User.query.filter_by(id=id).first_or_404()
     posts = Post.query.filter_by(author_id=id)
     return render_template('user.html', user=user, title=user.username, posts=posts)
+
+
+@bp.route('/files/<filename>')
+@login_required
+def uploaded_files(filename):
+    path = current_app.config['UPLOADED_PATH']
+    return send_from_directory(path, filename)
+
+
+@bp.route('/ckeditor_upload', methods=['POST'])
+def ckeditor_upload():
+    f = request.files.get('upload')
+    extension = f.filename.split('.')[-1].lower()
+    if extension not in ['jpg', 'gif', 'png', 'jpeg']:
+        return upload_fail(message='Image only!')
+    f.save(os.path.join(current_app.config['UPLOADED_PATH'], f.filename))
+    url = url_for('main.uploaded_files', filename=f.filename)
+    return upload_success(url=url)
