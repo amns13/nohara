@@ -16,3 +16,6 @@ class Config(object):
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    CKEDITOR_FILE_UPLOADER = 'main.ckeditor_upload'
+    # app.config['CKEDITOR_ENABLE_CSRF'] = True  # if you want to enable CSRF protect, uncomment this line
+    UPLOADED_PATH = os.path.join(basedir, 'ckeditor_uploads')
