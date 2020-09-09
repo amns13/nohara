@@ -44,7 +44,29 @@ def create():
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('main.index'))
-    return render_template('create.html', title="New Post.", form=form)
+    return render_template('create.html', title="New", form=form)
+
+
+@bp.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit(id):
+    post = Post.query.filter_by(id=id).first_or_404()
+    if post.author_id != current_user.id:
+        flash("You don't have access to the requested page.")
+        return redirect(url_for('main.index'))
+        
+    form = CreateForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.body = form.body.data 
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('main.index'))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.body.data = post.body
+
+    return render_template('create.html', title="Edit", form=form)
 
 
 @bp.route('/post/<int:id>')
@@ -53,11 +75,11 @@ def post(id):
     return render_template('blog_post.html', post=post, title=post.title)
 
 
-@bp.route('/user/<int:id>')
+@bp.route('/user/<username>')
 @login_required
-def user(id):
-    user = User.query.filter_by(id=id).first_or_404()
-    posts = Post.query.filter_by(author_id=id)
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author_id=user.id)
     return render_template('user.html', user=user, title=user.username, posts=posts)
 
 

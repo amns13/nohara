@@ -6,11 +6,16 @@
                 </a>
                 <br>
                 by
-                <a href="{{ url_for('main.user', id=post.author.id) }}">
+                <a href="{{ url_for('main.user', username=post.author.username) }}">
                     {{ post.author.username }}
                 </a>
                 <br>
                 Posted at : {{ moment(post.timestamp).format('LLL') }}
+                {% if current_user.id == post.author.id %}
+                    <a href="{{ url_for('main.edit', id=post.id) }}">
+                        Edit
+                    </a>
+                {% endif %}
             </td>
         </tr>
     </table>
