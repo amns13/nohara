@@ -5,7 +5,9 @@ from flask_login import login_required, current_user
 from flask import redirect, render_template, url_for, request, flash, session, g, current_app, send_from_directory
 from app.main.forms import CreateForm
 from flask_ckeditor import upload_fail, upload_success
+from time import time
 
+import re
 import os
 
 @bp.route('/')
@@ -96,6 +98,8 @@ def ckeditor_upload():
     extension = f.filename.split('.')[-1].lower()
     if extension not in ['jpg', 'gif', 'png', 'jpeg']:
         return upload_fail(message='Image only!')
-    f.save(os.path.join(current_app.config['UPLOADED_PATH'], f.filename))
-    url = url_for('main.uploaded_files', filename=f.filename)
+    timestamp = re.sub('\.', '', str(time()))
+    filename = str(current_user.id) + timestamp + f.filename
+    f.save(os.path.join(current_app.config['UPLOADED_PATH'], filename))
+    url = url_for('main.uploaded_files', filename=filename)
     return upload_success(url=url)
