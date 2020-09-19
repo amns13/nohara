@@ -6,6 +6,7 @@ WORKDIR /home/nohara
 
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
+RUN mkdir ckeditor_uploads
 RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/pip install gunicorn pymysql
 
