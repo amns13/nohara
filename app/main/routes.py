@@ -86,7 +86,6 @@ def user(username):
 
 
 @bp.route('/files/<filename>')
-@login_required
 def uploaded_files(filename):
     path = current_app.config['UPLOADED_PATH']
     return send_from_directory(path, filename)

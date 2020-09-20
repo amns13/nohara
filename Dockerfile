@@ -1,4 +1,4 @@
-FROM python:3.8.5-alpine
+FROM python:rc-alpine3.12
 
 RUN adduser -D nohara
 
