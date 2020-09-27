@@ -7,4 +7,13 @@
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}
+    <ul class="pagination">
+        {% if prev_url %}
+        <li class="page-item"><a class="page-link" href="{{ prev_url }}">Newer Posts</a></li>
+        {% endif %}
+        {% if next_url %}
+        <li class="page-item"><a class="page-link" href="{{ next_url }}">Older Posts</a></li>
+        {% endif %}
+    </ul>
+
 {% endblock %}

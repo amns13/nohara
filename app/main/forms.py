@@ -8,3 +8,4 @@ class CreateForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     body = CKEditorField('Body', validators=[DataRequired()])
     save = SubmitField('Save')
+    cancel = SubmitField('Cancel', render_kw={'formnovalidate': True})
