@@ -7,5 +7,5 @@ from flask_ckeditor import CKEditorField
 class CreateForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     body = CKEditorField('Body', validators=[DataRequired()])
-    save = SubmitField('Save')
+    save = SubmitField(label='Save', id='save-submit-btn')
     cancel = SubmitField('Cancel', render_kw={'formnovalidate': True})
