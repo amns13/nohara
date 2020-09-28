@@ -19,3 +19,4 @@ class Config(object):
     CKEDITOR_FILE_UPLOADER = 'main.ckeditor_upload'
     # app.config['CKEDITOR_ENABLE_CSRF'] = True  # if you want to enable CSRF protect, uncomment this line
     UPLOADED_PATH = os.path.join(basedir, 'ckeditor_uploads')
+    POSTS_PER_PAGE = 10

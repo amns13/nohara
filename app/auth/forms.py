@@ -8,7 +8,7 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+    submit = SubmitField(label='Sign In', id='save-submit-btn')
 
 
 class RegistrationForm(FlaskForm):
@@ -16,7 +16,7 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+    submit = SubmitField(label='Register', id='save-submit-btn')
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
@@ -31,7 +31,7 @@ class RegistrationForm(FlaskForm):
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Request Password Reset')
+    submit = SubmitField(label='Request Password Reset', id='save-submit-btn')
 
 
 class ResetPasswordForm(FlaskForm):
@@ -39,4 +39,4 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(),
                                            EqualTo('password')])
-    submit = SubmitField('Reset Password')
+    submit = SubmitField(label='Reset Password', id='save-submit-btn')
