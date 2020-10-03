@@ -5,4 +5,92 @@
     - By <em>{{ post.author.username }}</em>
     <hr>
     {{ post.body|safe }}
+    <hr>
+    <h3>Comments</h3>
+    <table class="table table-hover" id="comments-tab">
+        {% for comment in comments %}
+            {# include '_post.html' #}
+            <tr>
+                <td>
+                    {{ comment.body }}
+                    <br>
+                    -
+                    <a href="{{ url_for('main.user', username=comment.author.username) }}">
+                        <em>{{ comment.author.username }}</em>
+                    </a>
+                    , {{ moment(comment.timestamp).format('LLL') }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if current_user.is_anonymous %}
+        <p><a href="{{ url_for('auth.login') }}">Login</a> to add a comment.</p>
+    {% else %}
+        <form id="blog-cmnt">
+            {{ form.body }}
+            {{ form.hidden_tag() }}
+            <input type="submit" value="Save" id="save-btn">
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(document).ready(function() {
+            $('form').submit(function (e) {
+                // $(this).find('#save-btn').prop('disabled',true);
+                document.getElementById("save-btn").disabled = true;
+                var url = "{{ url_for('main.add_comment', postid=post.id) }}"; // send the form data here.
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: $('form').serialize(), // serializes the form's elements.
+                    success: function (data) {
+                        console.log(data);  // display the returned data in the console.
+                        // $(this).find('#save-btn').prop('disabled',false);
+                        document.getElementById("save-btn").disabled = false;
+                        document.getElementById('body').value='';
+                        addRow();
+                    }
+                });
+                e.preventDefault(); // block the traditional submission of the form.
+            });
+        });
+
+        function addRow() {
+            var root = document.getElementById('comments-tab').getElementsByTagName('tbody')[0];
+            var rows = root.getElementsByTagName('tr');
+            var clone = cloneEl(rows[rows.length - 1]);
+            cleanUpInputs(clone);
+            root.appendChild(clone);
+        }
+
+        /*
+        function addColumn() {
+            var rows = document.getElementById('comments-tab').getElementsByTagName('tr'), i = 0, r, c, clone;
+            while (r = rows[i++]) {
+                c = r.getElementsByTagName('td');
+                clone = cloneEl(c[c.length - 1]);
+                cleanUpInputs(clone);
+                c[0].parentNode.appendChild(clone);
+            }
+        }
+        */
+
+        function cloneEl(el) {
+            var clo = el.cloneNode(true);
+            return clo;
+        }
+
+        function cleanUpInputs(obj) {
+            for (var i = 0; n = obj.childNodes[i]; ++i) {
+                if (n.childNodes && n.tagName != 'INPUT') {
+                    cleanUpInputs(n);
+                } else if (n.tagName == 'INPUT' && n.type == 'text') {
+                    n.value = '';
+                }
+            }  
+        }
+    </script>
 {% endblock %}

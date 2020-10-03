@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(80), unique=True, index=True, nullable=False)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy=True)
+    comments = db.relationship('Comment', backref='author', lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -44,6 +45,7 @@ class Post(db.Model):
     body  = db.Column(db.Text, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    comments = db.relationship('Comment', backref='post', lazy=True)
 
     def __repr__(self):
         return '<Post %r>' % self.title
@@ -52,3 +54,14 @@ class Post(db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.String(4000))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Comment %r>' % self.id

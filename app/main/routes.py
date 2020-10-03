@@ -1,9 +1,9 @@
 from app.main import bp
 from app import db
-from app.models import User, Post
+from app.models import User, Post, Comment
 from flask_login import login_required, current_user
-from flask import redirect, render_template, url_for, request, flash, session, g, current_app, send_from_directory
-from app.main.forms import CreateForm
+from flask import redirect, render_template, url_for, request, flash, session, g, current_app, send_from_directory, jsonify
+from app.main.forms import CreateForm, CommentForm
 from flask_ckeditor import upload_fail, upload_success
 from time import time
 
@@ -81,8 +81,22 @@ def edit(id):
 @bp.route('/post/<int:id>')
 def post(id):
     post = Post.query.filter_by(id=id).first_or_404()
-    return render_template('blog_post.html', post=post, title=post.title)
+    comments = Comment.query.filter_by(post_id=id).all()
+    form = CommentForm()
+    return render_template('blog_post.html', post=post, comments=comments, title=post.title, form=form)
 
+
+@login_required
+@bp.route('/post/<int:postid>/add_comment/', methods=['POST'])
+def add_comment(postid):
+    form = CommentForm()
+    if form.validate_on_submit():
+        body = form.body.data
+        comment = Comment(body=body, post_id=postid, author_id=current_user.id)
+        db.session.add(comment)
+        db.session.commit()
+        return jsonify(data={'message': '{}'.format(form.body.data)})
+    return jsonify(data={'message': 'An error occurred.'})
 
 @bp.route('/user/<username>')
 @login_required
