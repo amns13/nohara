@@ -5,6 +5,15 @@
     - By <em>{{ post.author.username }}</em>
     <hr>
     {{ post.body|safe }}
+    <br>
+    <span id="likes">{{ likes }}</span> likes. 
+    {% if not current_user.is_anonymous %}
+        {% if current_user.has_liked_post(post) %}
+            | <a href="#" id="like">Unlike</a>
+        {% else %}
+            | <a href="#" id="like">Like</a>
+        {% endif %}
+    {% endif %}
     <hr>
     <h3>Comments</h3>
     <table class="table table-hover" id="comments-tab">
@@ -69,6 +78,33 @@
                     }
                 });
                 e.preventDefault(); // block the traditional submission of the form.
+            });
+
+            $('#like').click(function (e) {
+                let action = $('#like').text();
+                console.log(action)
+                let url = "";
+
+                if (action == 'Like'){
+                    url = "{{ url_for('main.like_action', post_id=post.id, action='like') }}";
+                    $('#like').text('Unlike');
+                } else if (action == 'Unlike') {
+                    url = "{{ url_for('main.like_action', post_id=post.id, action='unlike') }}";
+                    $('#like').text('Like');
+                } else {
+                    console.log("Nice Try");
+                    return;
+                }
+                console.log(url);
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function (response) {
+                        $('#likes').text(response['count']);
+                    }
+                });
+                
             });
         });
 
