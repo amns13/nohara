@@ -95,8 +95,8 @@ def add_comment(postid):
         comment = Comment(body=body, post_id=postid, author_id=current_user.id)
         db.session.add(comment)
         db.session.commit()
-        return jsonify(data={'message': '{}'.format(form.body.data)})
-    return jsonify(data={'message': 'An error occurred.'})
+        return jsonify({'message': '{}'.format(form.body.data), 'author': current_user.username})
+    return jsonify({'message': 'An error occurred.'})
 
 @bp.route('/user/<username>')
 @login_required

@@ -8,6 +8,7 @@
     <hr>
     <h3>Comments</h3>
     <table class="table table-hover" id="comments-tab">
+        <tbody id="tbody">
         {% for comment in comments %}
             {# include '_post.html' #}
             <tr>
@@ -22,6 +23,7 @@
                 </td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
     {% if current_user.is_anonymous %}
         <p><a href="{{ url_for('auth.login') }}">Login</a> to add a comment.</p>
@@ -47,17 +49,30 @@
                     url: url,
                     data: $('form').serialize(), // serializes the form's elements.
                     success: function (data) {
-                        console.log(data);  // display the returned data in the console.
+                        console.log(data['message']);  // display the returned data in the console.
                         // $(this).find('#save-btn').prop('disabled',false);
                         document.getElementById("save-btn").disabled = false;
                         document.getElementById('body').value='';
-                        addRow();
+                        var rowIdx= document.getElementById('comments-tab').rows.length;
+                        $('#tbody').append(`<tr> 
+                            <td> 
+                                `+ data['message'] +`
+                                <br>
+                                -
+                                <a href="{{ url_for('main.user', username=current_user.username) }}">
+                                    <em>{{ current_user.username }}</em>
+                                </a>
+                                , Just Now.
+                            </td> 
+                            </tr>`);
+                        //addRow();
                     }
                 });
                 e.preventDefault(); // block the traditional submission of the form.
             });
         });
 
+        /*
         function addRow() {
             var root = document.getElementById('comments-tab').getElementsByTagName('tbody')[0];
             var rows = root.getElementsByTagName('tr');
@@ -66,7 +81,7 @@
             root.appendChild(clone);
         }
 
-        /*
+        //This is not required, but keeping it here for future reference.
         function addColumn() {
             var rows = document.getElementById('comments-tab').getElementsByTagName('tr'), i = 0, r, c, clone;
             while (r = rows[i++]) {
@@ -76,7 +91,6 @@
                 c[0].parentNode.appendChild(clone);
             }
         }
-        */
 
         function cloneEl(el) {
             var clo = el.cloneNode(true);
@@ -92,5 +106,6 @@
                 }
             }  
         }
+        */
     </script>
 {% endblock %}
