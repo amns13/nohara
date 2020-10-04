@@ -1,6 +1,6 @@
 from app.main import bp
 from app import db
-from app.models import User, Post, Comment
+from app.models import User, Post, Comment, PostLike
 from flask_login import login_required, current_user
 from flask import redirect, render_template, url_for, request, flash, session, g, current_app, send_from_directory, jsonify
 from app.main.forms import CreateForm, CommentForm
@@ -82,8 +82,9 @@ def edit(id):
 def post(id):
     post = Post.query.filter_by(id=id).first_or_404()
     comments = Comment.query.filter_by(post_id=id).all()
+    likes = PostLike.query.filter_by(post_id=id).count()
     form = CommentForm()
-    return render_template('blog_post.html', post=post, comments=comments, title=post.title, form=form)
+    return render_template('blog_post.html', post=post, comments=comments, title=post.title, likes=likes, form=form)
 
 
 @login_required
@@ -95,8 +96,24 @@ def add_comment(postid):
         comment = Comment(body=body, post_id=postid, author_id=current_user.id)
         db.session.add(comment)
         db.session.commit()
-        return jsonify(data={'message': '{}'.format(form.body.data)})
-    return jsonify(data={'message': 'An error occurred.'})
+        return jsonify({'message': '{}'.format(form.body.data)})
+    return jsonify({'message': 'An error occurred.'})
+
+
+@login_required
+@bp.route('/like/<int:post_id>/<action>', methods=['POST'])
+def like_action(post_id, action):
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    if action == 'like':
+        current_user.like_post(post)
+        db.session.commit()
+    if action == 'unlike':
+        current_user.unlike_post(post)
+        db.session.commit()
+    #return redirect(request.referrer)
+    likes = PostLike.query.filter_by(post_id=post_id).count()
+    return jsonify({'count': likes})
+
 
 @bp.route('/user/<username>')
 @login_required
