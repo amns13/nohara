@@ -20,3 +20,7 @@ class Config(object):
     # app.config['CKEDITOR_ENABLE_CSRF'] = True  # if you want to enable CSRF protect, uncomment this line
     UPLOADED_PATH = os.path.join(basedir, 'ckeditor_uploads')
     POSTS_PER_PAGE = 10
+    MAIL_DEFAULT_SENDER=os.environ.get('MAIL_DEFAULT_SENDER')
+    ADMIN_USER=os.environ.get('ADMIN_USER')
+    ADMIN_EMAIL=os.environ.get('ADMIN_EMAIL')
+    ADMIN_PW=os.environ.get('ADMIN_PW')
