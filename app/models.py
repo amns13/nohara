@@ -15,6 +15,8 @@ class User(UserMixin, db.Model):
     posts = db.relationship('Post', backref='author', lazy=True)
     comments = db.relationship('Comment', backref='author', lazy=True)
     liked = db.relationship('PostLike', foreign_keys='PostLike.user_id', backref='user', lazy='dynamic')
+    role = db.Column(db.Integer, default=1)
+    status = db.Column(db.Integer, default=3)
 
     def __repr__(self):
         return '<User %r>' % self.username
