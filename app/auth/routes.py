@@ -1,10 +1,10 @@
-import functools
+#import functools
 from app.auth import bp
 from app import db
 from app.models import User
-from flask import redirect, render_template, url_for, request, flash, session, g
+from flask import redirect, render_template, url_for, request, flash
 from flask_login import login_user, logout_user, current_user
-from sqlalchemy import or_
+#from sqlalchemy import or_
 from app.auth.email import send_password_reset_email
 from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordForm, ResetPasswordRequestForm
 from werkzeug.urls import url_parse

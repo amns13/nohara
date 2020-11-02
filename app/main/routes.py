@@ -2,7 +2,7 @@ from app.main import bp
 from app import db
 from app.models import User, Post, Comment, PostLike
 from flask_login import login_required, current_user
-from flask import redirect, render_template, url_for, request, flash, session, g, current_app, send_from_directory, jsonify
+from flask import redirect, render_template, url_for, request, flash,  current_app, send_from_directory, jsonify
 from app.main.forms import CreateForm, CommentForm
 from flask_ckeditor import upload_fail, upload_success
 from time import time
@@ -14,7 +14,7 @@ import os
 @bp.route('/index')
 def index():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
+    posts = Post.query.filter_by(status=1).order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.index', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) if posts.has_prev else None
     return render_template('index.html', title='Home', posts=posts.items, next_url=next_url, prev_url=prev_url)
@@ -57,7 +57,7 @@ def create():
 @bp.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit(id):
-    post = Post.query.filter_by(id=id).first_or_404()
+    post = Post.query.filter(Post.id == id).filter(Post.status == 1).first_or_404()
     if post.author_id != current_user.id:
         flash("You don't have access to the requested page.")
         return redirect(url_for('main.index'))
@@ -80,7 +80,7 @@ def edit(id):
 
 @bp.route('/post/<int:id>')
 def post(id):
-    post = Post.query.filter_by(id=id).first_or_404()
+    post = Post.query.filter(Post.id == id).filter(Post.status == 1).first_or_404()
     comments = Comment.query.filter_by(post_id=id).all()
     likes = PostLike.query.filter_by(post_id=id).count()
     form = CommentForm()
@@ -103,7 +103,8 @@ def add_comment(postid):
 @login_required
 @bp.route('/like/<int:post_id>/<action>', methods=['POST'])
 def like_action(post_id, action):
-    post = Post.query.filter_by(id=post_id).first_or_404()
+    #post = Post.query.filter_by(id=post_id).first_or_404()
+    post = Post.query.filter(Post.id == post_id).filter(Post.status == 1).first_or_404()
     if action == 'like':
         current_user.like_post(post)
         db.session.commit()
@@ -120,7 +121,7 @@ def like_action(post_id, action):
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.filter_by(author_id=user.id).order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
+    posts = Post.query.filter(Post.author_id==user.id).filter(Post.status==1).order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.user', username=username, page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.user', username=username, page=posts.prev_num) if posts.has_prev else None
     return render_template('user.html', user=user, title=user.username, posts=posts.items, next_url=next_url, prev_url=prev_url)
