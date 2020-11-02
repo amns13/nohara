@@ -16,6 +16,11 @@
                         Edit
                     </a>
                 {% endif %}
+                {% if current_user.role == 0 %}
+                    <a href="{{ url_for('admin.delete_post', post_id=post.id) }}">
+                        Delete
+                    </a>
+                {% endif %}
             </td>
         </tr>
     </table>

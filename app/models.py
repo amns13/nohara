@@ -62,6 +62,7 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     comments = db.relationship('Comment', backref='post', lazy=True)
+    status = db.Column(db.Integer, default=1)
 
     def __repr__(self):
         return '<Post %r>' % self.title
