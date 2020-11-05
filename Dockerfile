@@ -18,6 +18,7 @@ RUN chmod +x boot.sh
 ENV FLASK_APP nohara.py
 
 RUN chown -R nohara:nohara ./
+RUN  chown nohara ckeditor_uploads
 USER nohara
 
 EXPOSE 5000
