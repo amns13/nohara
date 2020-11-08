@@ -2,11 +2,12 @@
 from app.auth import bp
 from app import db
 from app.models import User
+from app.globalkeys import GlobalKeys as gk
 from flask import redirect, render_template, url_for, request, flash
 from flask_login import login_user, logout_user, current_user
 #from sqlalchemy import or_
-from app.auth.email import send_password_reset_email
-from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordForm, ResetPasswordRequestForm
+from app.auth.email import send_password_reset_email, send_email_verification_email
+from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordForm, ResetPasswordRequestForm, VerifyEmailRequestForm
 from werkzeug.urls import url_parse
 
 #@bp.route('/register', methods=['GET', 'POST'])
@@ -45,11 +46,12 @@ def register():
         return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data, email=form.email.data, status=gk.user_status['UNVERIFIED'], role=gk.user_role['REGULAR'])
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        send_email_verification_email(user)
+        flash('Please check your email to verify your account.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Register',
                            form=form)
@@ -93,6 +95,9 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('auth.login'))
+        if user.status != gk.user_status['ACTIVE']:
+            flash('Please verify your email-id.')
+            return redirect(url_for('auth.verify_email_request'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         #An attacker could insert a URL to a malicious site in the next argument, so the application only redirects when the URL is relative, which ensures that the redirect stays within the same site as the application. To determine if the URL is relative or absolute, I parse it with Werkzeug's url_parse() function and then check if the netloc component is set or not.
@@ -180,7 +185,7 @@ def reset_password_request():
         return redirect(url_for('main.index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data).filter_by(status=gk.user_status['ACTIVE']).first()
         if user:
             send_password_reset_email(user)
         flash('Check your email for the instructions to reset your password')
@@ -203,3 +208,31 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
+
+
+@bp.route('/verify_email_request', methods=['GET', 'POST'])
+def verify_email_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = VerifyEmailRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).filter_by(status=gk.user_status['UNVERIFIED']).first()
+        if user:
+            send_email_verification_email(user)
+        flash("Check your email for the instructions to verify your email.")
+        return redirect(url_for('auth.login'))
+    return render_template('auth/verify_email_request.html', title='Verify Email', form=form)
+
+
+@bp.route('/verify_email/<token>')
+def verify_email(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    user = User.verify_email_verification_token(token)
+    if not user or user.status != gk.user_status['UNVERIFIED']:
+        return redirect(url_for('main.index'))
+
+    user.status = gk.user_status['ACTIVE']
+    db.session.commit()
+    flash('Your email address has been verified. Please login to access your account.')
+    return redirect(url_for('auth.login'))
