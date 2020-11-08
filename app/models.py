@@ -32,6 +32,11 @@ class User(UserMixin, db.Model):
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
+    def get_email_verification_token(self, expires_in=86400):
+        return jwt.encode(
+            {'verify_email': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
     def like_post(self, post):
         if not self.has_liked_post(post):
             like = PostLike(user_id=self.id, post_id=post.id)
@@ -54,6 +59,14 @@ class User(UserMixin, db.Model):
             return
         return User.query.get(id)
 
+    @staticmethod
+    def verify_email_verification_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+            algorithms=['HS256'])['verify_email']
+        except:
+            return
+        return User.query.get(id)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)

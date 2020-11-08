@@ -11,3 +11,14 @@ def send_password_reset_email(user):
                                     user=user, token=token),
         html_body=render_template('email/reset_password.html',
                                     user=user, token=token))
+
+
+def send_email_verification_email(user):
+    token = user.get_email_verification_token()
+    send_email('[Nohara] Verify Your Email',
+        sender=current_app.config['MAIL_DEFAULT_SENDER'],
+        recipients=[user.email],
+        text_body=render_template('email/verify_email.txt',
+                                    user=user, token=token),
+        html_body=render_template('email/verify_email.html',
+                                    user=user, token=token))

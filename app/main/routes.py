@@ -87,8 +87,8 @@ def post(id):
     return render_template('blog_post.html', post=post, comments=comments, title=post.title, likes=likes, form=form)
 
 
-@login_required
 @bp.route('/post/<int:postid>/add_comment/', methods=['POST'])
+@login_required
 def add_comment(postid):
     form = CommentForm()
     if form.validate_on_submit():
@@ -100,8 +100,8 @@ def add_comment(postid):
     return jsonify({'message': 'An error occurred.'})
 
 
-@login_required
 @bp.route('/like/<int:post_id>/<action>', methods=['POST'])
+@login_required
 def like_action(post_id, action):
     #post = Post.query.filter_by(id=post_id).first_or_404()
     post = Post.query.filter(Post.id == post_id).filter(Post.status == 1).first_or_404()

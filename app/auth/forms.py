@@ -40,3 +40,8 @@ class ResetPasswordForm(FlaskForm):
         'Repeat Password', validators=[DataRequired(),
                                            EqualTo('password')])
     submit = SubmitField(label='Reset Password', id='save-submit-btn')
+
+
+class VerifyEmailRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField(label='Send Email verification mail', id='save-submit-btn')

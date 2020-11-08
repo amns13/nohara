@@ -1,0 +1,11 @@
+Dear {{ user.username }},
+
+To verify your email address click on the following link:
+
+{{ url_for('auth.verify_email', token=token, _external=True) }}
+
+If you have not created an account on Nohara simply ignore this message.
+
+Sincerely,
+
+The Nohara Team
